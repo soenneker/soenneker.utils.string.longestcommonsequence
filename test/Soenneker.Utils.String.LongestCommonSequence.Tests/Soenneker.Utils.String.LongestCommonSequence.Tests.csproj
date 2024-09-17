@@ -31,7 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\Soenneker.Utils.String.LongestCommonSequence.csproj" />
+        <ProjectReference Include="..\..\src\Soenneker.Utils.String.LongestCommonSequence.csproj" />
     </ItemGroup>
 
 </Project>
