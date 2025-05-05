@@ -1,4 +1,4 @@
-# Contributing to Soenneker.Utils.String.LongestCommonSequence
+﻿# Contributing to Soenneker.Utils.String.LongestCommonSequence
 
 We're excited that you're interested in contributing!
 
