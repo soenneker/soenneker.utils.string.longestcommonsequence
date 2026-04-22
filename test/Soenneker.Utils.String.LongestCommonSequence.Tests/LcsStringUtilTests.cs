@@ -1,14 +1,13 @@
 using AwesomeAssertions;
-using Soenneker.Tests.FixturedUnit;
-using Xunit;
+using Soenneker.Tests.HostedUnit;
 
 
 namespace Soenneker.Utils.String.LongestCommonSequence.Tests;
 
-[Collection("Collection")]
-public class LcsStringUtilTests : FixturedUnitTest
+[ClassDataSource<Host>(Shared = SharedType.PerTestSession)]
+public class LcsStringUtilTests : HostedUnitTest
 {
-    public LcsStringUtilTests(Fixture fixture, ITestOutputHelper output) : base(fixture, output)
+    public LcsStringUtilTests(Host host) : base(host)
     {
     }
 
