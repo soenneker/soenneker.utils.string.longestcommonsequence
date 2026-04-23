@@ -11,18 +11,18 @@ public class LcsStringUtilTests : HostedUnitTest
     {
     }
 
-    [Theory]
-    [InlineData("", "", 1)]
-    [InlineData("abc", "", 0)]
-    [InlineData("", "xyz", 0)]
-    [InlineData("kitten", "sitting", .5714)]
-    [InlineData("kitten", "kitten", 1)]
-    [InlineData("abc", "def", 0)]
-    [InlineData("abcdef", "abc", .5)]
-    [InlineData("abc", "abcd", .75)]
-    [InlineData("this is sitting on a porch", "this is sitting", .5769)]
-    [InlineData("the cat sat on a hat", "sad on a hat", .55)]
-    [InlineData("this is a test", "this is another test", .7)]
+    [Test]
+    [Arguments("", "", 1)]
+    [Arguments("abc", "", 0)]
+    [Arguments("", "xyz", 0)]
+    [Arguments("kitten", "sitting", .5714)]
+    [Arguments("kitten", "kitten", 1)]
+    [Arguments("abc", "def", 0)]
+    [Arguments("abcdef", "abc", .5)]
+    [Arguments("abc", "abcd", .75)]
+    [Arguments("this is sitting on a porch", "this is sitting", .5769)]
+    [Arguments("the cat sat on a hat", "sad on a hat", .55)]
+    [Arguments("this is a test", "this is another test", .7)]
     public void CalculateSimilarity_Returns_Correct_Similarity_Score(string str1, string str2, double expectedScore)
     {
         double similarityScore = LcsStringUtil.CalculateSimilarity(str1, str2);
@@ -30,3 +30,4 @@ public class LcsStringUtilTests : HostedUnitTest
         similarityScore.Should().BeApproximately(expectedScore, 0.001);
     }
 }
+
