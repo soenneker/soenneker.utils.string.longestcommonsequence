@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Diagnostics.Contracts;
 
 namespace Soenneker.Utils.String.LongestCommonSequence;
@@ -60,13 +61,41 @@ public static class LcsStringUtil
         if (s1 == s2)
             return 1;
 
-        int[] lcsRow = CalculateSimilarityArray(s1, s2);
-        int lcsLength = lcsRow[s2.Length];
+        int lcsLength = CalculateLength(s1, s2);
 
         // Calculate similarity as a percentage
         double similarity = (double)lcsLength / Math.Max(s1.Length, s2.Length);
 
         return similarity;
+    }
+
+    private static int CalculateLength(string first, string second)
+    {
+        if (second.Length > first.Length)
+            (first, second) = (second, first);
+
+        int rowLength = second.Length + 1;
+        int[]? rented = null;
+        Span<int> row = rowLength <= 256 ? stackalloc int[rowLength] : (rented = ArrayPool<int>.Shared.Rent(rowLength)).AsSpan(0, rowLength);
+        row.Clear();
+
+        for (var i = 1; i <= first.Length; i++)
+        {
+            var previous = 0;
+
+            for (var j = 1; j <= second.Length; j++)
+            {
+                int current = row[j];
+                row[j] = first[i - 1] == second[j - 1] ? previous + 1 : Math.Max(row[j], row[j - 1]);
+                previous = current;
+            }
+        }
+
+        int result = row[second.Length];
+        if (rented is not null)
+            ArrayPool<int>.Shared.Return(rented);
+
+        return result;
     }
 
     /// <summary>
