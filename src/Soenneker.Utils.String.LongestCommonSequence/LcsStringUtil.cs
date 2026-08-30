@@ -5,16 +5,16 @@ using System.Diagnostics.Contracts;
 namespace Soenneker.Utils.String.LongestCommonSequence;
 
 /// <summary>
-/// A utility library for comparing strings via the Longest Common Sequence algorithm
+/// Compares strings using the longest common subsequence algorithm.
 /// </summary>
 public static class LcsStringUtil
 {
     /// <summary>
-    /// Calculates the similarity array between two strings.
+    /// Calculates the final longest-common-subsequence dynamic-programming row for all prefixes of the second string.
     /// </summary>
     /// <param name="str1">The first string.</param>
     /// <param name="str2">The second string.</param>
-    /// <returns>An array representing the similarity between the two strings.</returns>
+    /// <returns>An array whose element at index <c>j</c> is the LCS length between <paramref name="str1"/> and the first <c>j</c> characters of <paramref name="str2"/>.</returns>
     [Pure]
     public static int[] CalculateSimilarityArray(string str1, string str2)
     {
