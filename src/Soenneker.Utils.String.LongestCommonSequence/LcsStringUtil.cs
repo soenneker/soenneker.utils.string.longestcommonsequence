@@ -23,28 +23,8 @@ public static class LcsStringUtil
 
         var lcsRow = new int[n + 1];
 
-        for (var i = 0; i <= m; i++)
-        {
-            var prev = 0;
-
-            for (var j = 0; j <= n; j++)
-            {
-                int current = lcsRow[j];
-
-                if (i > 0 && j > 0)
-                {
-                    if (str1[i - 1] == str2[j - 1])
-                    {
-                        lcsRow[j] = prev + 1;
-                    }
-                    else
-                    {
-                        lcsRow[j] = Math.Max(lcsRow[j], lcsRow[j - 1]);
-                    }
-                }
-                prev = current;
-            }
-        }
+        if (m != 0 && n != 0)
+            FillRow(str1, str2, lcsRow);
 
         return lcsRow;
     }
@@ -74,28 +54,48 @@ public static class LcsStringUtil
         if (second.Length > first.Length)
             (first, second) = (second, first);
 
-        int rowLength = second.Length + 1;
+        ReadOnlySpan<char> rows = first;
+        ReadOnlySpan<char> columns = second;
+        int prefix = rows.CommonPrefixLength(columns);
+        rows = rows[prefix..];
+        columns = columns[prefix..];
+        int suffix = 0;
+        while (suffix < columns.Length && rows[^(suffix + 1)] == columns[^(suffix + 1)])
+            suffix++;
+
+        columns = columns[..(columns.Length - suffix)];
+        if (columns.IsEmpty)
+            return prefix + suffix;
+
+        rows = rows[..(rows.Length - suffix)];
+        int rowLength = columns.Length + 1;
         int[]? rented = null;
         Span<int> row = rowLength <= 256 ? stackalloc int[rowLength] : (rented = ArrayPool<int>.Shared.Rent(rowLength)).AsSpan(0, rowLength);
-        row.Clear();
-
-        for (var i = 1; i <= first.Length; i++)
+        try
         {
-            var previous = 0;
+            row.Clear();
+            FillRow(rows, columns, row);
+            return prefix + row[^1] + suffix;
+        }
+        finally
+        {
+            if (rented is not null)
+                ArrayPool<int>.Shared.Return(rented);
+        }
+    }
 
-            for (var j = 1; j <= second.Length; j++)
+    private static void FillRow(ReadOnlySpan<char> first, ReadOnlySpan<char> second, Span<int> row)
+    {
+        foreach (char character in first)
+        {
+            int diagonal = 0;
+            for (int j = 1; j < row.Length; j++)
             {
-                int current = row[j];
-                row[j] = first[i - 1] == second[j - 1] ? previous + 1 : Math.Max(row[j], row[j - 1]);
-                previous = current;
+                int above = row[j];
+                row[j] = character == second[j - 1] ? diagonal + 1 : Math.Max(above, row[j - 1]);
+                diagonal = above;
             }
         }
-
-        int result = row[second.Length];
-        if (rented is not null)
-            ArrayPool<int>.Shared.Return(rented);
-
-        return result;
     }
 
     /// <summary>
